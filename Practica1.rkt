@@ -14,11 +14,21 @@
 (define (average lst)
   (cond
     [(empty? lst) 0]
-    [else(+ (car lst) (average (cdr lst)))]))
-(test(average '(1 2 3)) 6)
-(test(average '(4 7 9 10)) 30)
-(test(average '(18)) 18)
+    [else (/ (+ (car lst) (average (cdr lst))) (mlength lst))])) ;No esta funcionando, no devuelve los resultados que deberia
 
+;(test(average '(1 2 3)) 2)
+;(test(average '(4 7 9 10)) 7.5)
+;(test(average '(18)) 18)
+
+
+;Metodo auxiliar que saca la longitud de la lista y nos ayudara para sacar el promedio
+(define (mlength a-lst)                   
+  (cond                                   
+    [(empty? a-lst) 0]                    
+    [else (+ 1 (mlength (cdr a-lst)))]))  
+(test (mlength '()) 0)
+(test (mlength '(1 2 3 4)) 4)
+(test (mlength '(5 6)) 2)
 
         
 ;(define (primes num)
