@@ -8,6 +8,8 @@
 (test(pow 5 3) 125)
 (test(pow 4 6) 4096)
 (test(pow 20 0) 1)
+(test(pow 10 1) 10)
+(test(pow 9 2) 81)
 
 
 
