@@ -33,7 +33,7 @@
         
 ;(define (primes num)
 
-
+;Siempre devuelve '()
 (define (zip l1 l2)
   (cond
     [(empty? l1) '()]
