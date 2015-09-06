@@ -32,7 +32,12 @@
 
 
 
-;;;;;;;;;;Función Primes;;;;;;;;;
+;;;;;;;;;;Function primes;;;;;;;;;
+;By The function call is prime, we know if the number That We passed as parameters is prime, if this happens, we add this number 
+;an list, but if this does not happen we continue with the process. We subtract 1 from ours a parameter and now see if that 
+;number is prime. We do this by recursively calling this method.Once we have all the primes ​​from 2 to the number we were given 
+;as a parameter, we return the list of all prime numbers.
+;If the number that happen to us is 0 or 1 return the empty list since those numbers are not prime and are not above 2.
 
 (define (primes n)
   (cond
@@ -40,19 +45,36 @@
     [(not (esprimo n)) (primes (sub1 n))]
     [else (cons n (primes (sub1 n)))]))
 
-  
+
+;;;;;Auxiliar function divided;;;;;
+;Divide the first number that happen to us as a parameter between the second and if it does not an integer take the floor of 
+;that number, then multiply that result by the second number we have as parameter (it was the same by which divide the first 
+;number) and we verify if that result gives us the number we divided,if this happens it means that the second number is a divisor
+;of the first number and return 1, otherwise return 0
+
 (define (divide num1 num2)
   (if ( = num1 ( * (floor (/ num1 num2)) num2))1 0))
 
+
+;;;;;Auxiliar function to count the number of dividers;;;;;
+;Call the function split to see if a number is a divisor of another , and if so will increase by 1 the counter of dividers, which
+;starts at zero, otherwise keep looking dividers number.
 
 (define (divisores num div)
     (if (= div 0)
         0
    (+ (divide num div)(divisores num(- div 1)))))
+   
+   
+;;;;;Auxiliar function to determine if a number is prime or not;;;;;;
+;This get the total number of dividers that has a number, through the call to the function dividers, if the number has only two 
+;dividers then will return #t , indicating that the number is prime, otherwise it will return #f
 
 (define (esprimo n)
 (if (= (divisores n n) 2) #t #f))
 
+
+;;;;;Testing;;;;;
 (test(primes 11) '(11 7 5 3 2))
 (test(primes 30) '(29 23 19 17 13 11 7 5 3 2))
 (test(primes 0) '())
