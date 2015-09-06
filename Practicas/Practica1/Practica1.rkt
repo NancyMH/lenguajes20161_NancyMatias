@@ -173,4 +173,25 @@
 (test (mconcat '() '()) '())
 (test (mconcat '() '(1 2 4 5)) '(1 2 4 5))
 
-  
+
+;;;;;;;;;;mmap function;;;;;;;;;;
+;First we have to verify that the parameter that is expected to be a function really is, if not a function there will be nothing
+;you can do and then return the empty list.
+;If we get what we expect (a function), then we cross the list to apply that function to every element of the list we received as
+;parameter. To do this we created a new list and save the head of the list to be upgraded after applying the function. We again 
+;call this function to do the same with the rest of the list.
+
+(define (mmap fun lst)
+  (cond
+    [(empty? lst) '()]
+    [(equal?(procedure? fun) #f) '()]
+    [else (cons(fun(car lst))
+          (mmap fun (cdr lst)))]))
+
+;;;;;Testing;;;;;
+(test (mmap add1 '(0 1 2 3 4 5 6 7 8 9)) '(1 2 3 4 5 6 7 8 9 10))
+(test (mmap 56 '(2 3 4)) '())
+(test (mmap car '((1 2 3) (4 5 6) (7 8 9))) '(1 4 7))
+(test (mmap cdr '((1 2 3) (4 5 6) (7 8 9))) '((2 3) (5 6) (8 9)))
+(test (mmap #f '(50 40 30 20 10)) '())
+
