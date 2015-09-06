@@ -7,6 +7,73 @@
 
 (test (powerset '()) '(()))
 ;(test (powerset '(1 2)) '((1 2)(1)(2)()))
+
+;;;;;;;;;;;;;;;;;;;;;;;;No funciona;;;;;;;;;;;;;;;;;;;;;;;;
+(define (reduce fun lst)
+  (cond
+  [(empty? lst) '()]  
+  [(equal?(procedure? fun) #f) '()]
+  [else (cons(fun (car lst))
+          (reduce fun (cdr lst)))]))
+
+
+;;;;;;;;;;Función pow;;;;;;;;;;
+
+(define (pow n m)
+  (cond
+   [(equal? n 0) 0]
+   [(equal? m 0) 1]
+   [else (* n (pow n (- m 1)))]))
+(test(pow 5 3) 125)
+(test(pow 4 6) 4096)
+(test(pow 20 0) 1)
+(test(pow 0 5) 0)
+(test(pow 100 2) 10000)
+
+
+
+;;;;;;;;;;Función Primes;;;;;;;;;
+
+(define (primes n)
+  (cond
+    [(or(equal? n 0) (equal? n 1)) '()]
+    [(not (esprimo n)) (primes (sub1 n))]
+    [else (cons n (primes (sub1 n)))]))
+
+  
+(define (divide num1 num2)
+  (if ( = num1 ( * (floor (/ num1 num2)) num2))1 0))
+
+
+(define (divisores num div)
+    (if (= div 0)
+        0
+   (+ (divide num div)(divisores num(- div 1)))))
+
+(define (esprimo n)
+(if (= (divisores n n) 2) #t #f))
+
+(test(primes 11) '(11 7 5 3 2))
+(test(primes 30) '(29 23 19 17 13 11 7 5 3 2))
+(test(primes 0) '())
+(test(primes 19) '(19 17 13 11 7 5 3 2))
+(test(primes 1) '())
+
+
+;;;;;;;;;;Función zip;;;;;;;;;
+
+(define (zip l1 l2)
+  (cond
+    [(or(empty? l1) (empty? l2)) '()]
+    [else 
+      (cons(list(car l1) (car l2))
+           (zip (cdr l1) (cdr l2)))]))
+(test(zip '(1 2) '(3 4)) '((1 3) (2 4)))
+(test(zip '() '(20 40)) '())
+(test(zip '(1 2 3) '(4 5 6)) '((1 4) (2 5) (3 6)))
+(test(zip '(7 9) '(15 21 25 37)) '((7 15) (9 21)))
+(test(zip '(50 100 150) '()) '())
+
   
 ;Metodo every?
 (define (every? pred lst)
