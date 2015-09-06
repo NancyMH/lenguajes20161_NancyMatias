@@ -82,7 +82,11 @@
 (test(primes 1) '())
 
 
-;;;;;;;;;;Función zip;;;;;;;;;
+;;;;;;;;;;zip Function;;;;;;;;;
+;In this function we going to have a list of sub-lists from two lists that happen to us as a parameter.The first thing to do is 
+;verify that none of the lists that happen to us is empty, if there is empty then return an empty list because we can not attach
+;an empty list with another list. If we are not empty lists, we will form a list with a sublist with the head of each of the
+;lists be upgraded and re-call this method to do the same again with the rest of the lists.
 
 (define (zip l1 l2)
   (cond
@@ -90,6 +94,9 @@
     [else 
       (cons(list(car l1) (car l2))
            (zip (cdr l1) (cdr l2)))]))
+           
+           
+;;;;;Testing;;;;;
 (test(zip '(1 2) '(3 4)) '((1 3) (2 4)))
 (test(zip '() '(20 40)) '())
 (test(zip '(1 2 3) '(4 5 6)) '((1 4) (2 5) (3 6)))
