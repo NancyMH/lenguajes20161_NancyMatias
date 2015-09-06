@@ -1,4 +1,17 @@
 #lang plai
+;Metodo every?
+(define (every? pred lst)
+  (cond
+    [(empty? lst) #t]
+    [(not(pred (car lst))) #f]
+    [else (every? pred (cdr lst))]))
+
+(test (every? number? '()) #t)
+(test (every? positive? '(1 43 2 21)) #t)
+(test (every? number? '(1 2 y 344)) #f)
+(test (every? symbol? '(a a a -4)) #f)
+(test (every? symbol? '(a d f j l)) #t)
+
 ;Metodo any?
 (define (any? pred lst)
   (cond
@@ -11,9 +24,6 @@
 (test (any? string? '(1 2 42 344)) #f)
 (test (any? positive? '(78 a 781 -4)) #t)
 (test (any? symbol? '(90 10 18 a)) #t)
-
-
-
 
 ; Obtener el promedio.
 (define (average lst)
