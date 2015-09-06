@@ -1,4 +1,13 @@
 #lang plai
+; Metodo powerset
+(define (powerset lst)
+  (cond
+    [(empty? lst) '(())]
+    [else('(cons(car lst)) powerset(cdr lst))]))
+
+(test (powerset '()) '(()))
+;(test (powerset '(1 2)) '((1 2)(1)(2)()))
+  
 ;Metodo every?
 (define (every? pred lst)
   (cond
@@ -58,6 +67,8 @@
 (test (mconcat '(10 20 30) '(40)) '(10 20 30 40))
 (test (mconcat '() '(2 4 6)) '(2 4 6))
 (test (mconcat '(8 9) '()) '(8 9))
+(test (mconcat '() '()) '())
+(test (mconcat '() '(1 2 4 5)) '(1 2 4 5))
 
 ;(define (primes num);Siempre devuelve '()
 (define (zip l1 l2)
