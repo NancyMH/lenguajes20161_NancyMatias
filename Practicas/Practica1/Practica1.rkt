@@ -152,28 +152,25 @@
 (test (average '(1 2 3)) 2)
 (test (average '(10 14 19 5)) 12) 
 
-;Metodo concatenar
+
+;;;;;mconcat function;;;;;
+;We will join two lists that happen to us as a parameter .
+;If either of the two lists that happen to us is empty, we return only the other list. If either list is empty, we create a list
+;with the head of the list and return to first call the function to continue to get the rest of the elements of the first list
+;and the second and added to the new list.
 
 (define (mconcat lst1 lst2)
   (cond
    [(empty? lst1) lst2]
    [(empty? lst2) lst1]
    [else (cons(car lst1) (mconcat (cdr lst1) lst2))]))
-         
+   
+   
+;;;;;Testing;;;;;
 (test (mconcat '(10 20 30) '(40)) '(10 20 30 40))
 (test (mconcat '() '(2 4 6)) '(2 4 6))
 (test (mconcat '(8 9) '()) '(8 9))
 (test (mconcat '() '()) '())
 (test (mconcat '() '(1 2 4 5)) '(1 2 4 5))
-
-;(define (primes num);Siempre devuelve '()
-(define (zip l1 l2)
-  (cond
-    [(empty? l1) '()]
-    [(empty? l2) '()]
-    [else 
-     (define p (cons(car l1) (car l2)))
-     (zip (cdr l1) (cdr l2))]))
-;(test(zip '(1 2) '(3 4)) '(1 3) '(2 4))
 
   
