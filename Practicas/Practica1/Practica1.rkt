@@ -17,13 +17,18 @@
           (reduce fun (cdr lst)))]))
 
 
-;;;;;;;;;;Función pow;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;Pow function;;;;;;;;;;;;;;;;;;;;;;;;;
+;In this function, we take the base cases; first, if the user gives us a base with value 0, just return zero. 
+;If the exponent is 0, we return 1 for the law of exponents. Unless the exponent is distinct of zero, multiply the 
+;base and we call the function recursively pow with a exponent less 1.
 
 (define (pow n m)
   (cond
    [(equal? n 0) 0]
    [(equal? m 0) 1]
    [else (* n (pow n (- m 1)))]))
+   
+   ;;;Testing;;;
 (test(pow 5 3) 125)
 (test(pow 4 6) 4096)
 (test(pow 20 0) 1)
@@ -104,48 +109,70 @@
 (test(zip '(50 100 150) '()) '())
 
   
-;Metodo every?
+;;;;;;;;;;;;;;;;;;; Every? function;;;;;;;;;;;;;;;;;;;;;
+;First, we'll request two arguments for this function, a predicate and a list. We should check if all elements from list
+;are of type predicate, it can be a number, a symbol, etc. If list is empty simply we return true; 
+;if one element isn't of type predicate, we return false, if not we should check element by element and compare with
+;the predicate. For this we'll call recursively to the function every? with the rest of list.
+
 (define (every? pred lst)
   (cond
     [(empty? lst) #t]
     [(not(pred (car lst))) #f]
     [else (every? pred (cdr lst))]))
 
+;;;;;;Testing;;;;;;;
 (test (every? number? '()) #t)
 (test (every? positive? '(1 43 2 21)) #t)
 (test (every? number? '(1 2 y 344)) #f)
 (test (every? symbol? '(a a a -4)) #f)
 (test (every? symbol? '(a d f j l)) #t)
 
-;Metodo any?
+;;;;;;;;;;;;;;;;;;;;;;; Any? function;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;For the any? function, in the case list is empty, we should return false; unless this not happen we have to check 
+;element by element if one of them are the type predicate. If list isn't empty, we check the first element from list and
+;compare with the type; If that element is of the type predicate , we return true; if not we call recursively 
+;to the function any? with the rest of list. 
 (define (any? pred lst)
   (cond
     [(empty? lst) #f]
     [(pred (car lst)) #t]
     [else (any? pred (cdr lst))]))
 
+;;;;;; Testing;;;;;;;;;;;;;
 (test (any? positive? '()) #f)
 (test (any? number? '(a 43 "agg")) #t)
 (test (any? string? '(1 2 42 344)) #f)
 (test (any? positive? '(78 a 781 -4)) #t)
 (test (any? symbol? '(90 10 18 a)) #t)
 
-; Obtener el promedio.
+
+;;;;;;;;;;;;;;;;; Average function;;;;;;;;;;;;;;;;;
+;we'll obtain the average from a list. First, if list is empty, we just return zero. If not, we'll add up the value
+;of every element and finally we'll divide it for the number of items from list. For this function, 
+;we'll call to the add and mlength function. 
+
 (define (average lst)
    (cond 
      [(empty? lst) 0]
-     [else (/ (suma lst) (mlength lst))]))
- 
-(define (suma lst)
+     [else (/ (add lst) (mlength lst))]))
+     
+  ;;;;;;;;;;;;; Auxiliar function add;;;;;;;;;;;;
+ ;For this function, if list is empty, we just return zero. If list isn't empty, we take the value from the 
+ ;first element of list and add with a call recursively to the same function with the rest of the list.
+(define (add lst)
    (cond
     [(empty? lst) 0]
     [else (+ (car lst) (suma(cdr lst)))]))
 
+;;;;;;;;;;;;;;;; Auxiliar function mlength;;;;;;;;;
+;We'll obtain the number of elements of a list. If list is empty, we just return zero. If list isn't empty, 
+;we'll add 1 and after we'll call recursively to the same function with the rest of the list.
 (define (mlength a-lst)                   
   (cond                                   
     [(empty? a-lst) 0]                    
     [else (+ 1 (mlength (cdr a-lst)))]))  
-
+;;;; Testing;;;;;
 (test (average '(7 8)) 7.5)
 (test (average '()) 0)
 (test (average '(10 10 10 10 10)) 10)
