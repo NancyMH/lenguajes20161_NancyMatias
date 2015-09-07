@@ -166,7 +166,7 @@
 (define (add lst)
    (cond
     [(empty? lst) 0]
-    [else (+ (car lst) (suma(cdr lst)))]))
+    [else (+ (car lst) (add(cdr lst)))]))
 
 ;;;;;;;;;;;;;;;; Auxiliar function mlength;;;;;;;;;
 ;We'll obtain the number of elements of a list. If list is empty, we just return zero. If list isn't empty, 
