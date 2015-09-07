@@ -11,13 +11,21 @@
 (test (powerset '()) '(()))
 ;(test (powerset '(1 2)) '((1 2)(1)(2)()))
 
-;;;;;;;;;;;;;;;;;;;;;;;;No funciona;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;No funciona;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;This function should apply function that we are going as a parameter to the list which is also passed as a parameter. For this
+;we first verify that the list that are not happening to us is empty, because if is empty there is nothing to apply the function.
+;Then we must ensure that what we are getting as function really is, because if it is not a function can not do anything.
+;Once verified that the list is not empty and that is a function we're getting as a parameter proceed to apply this function to 
+;each item in the list , that is why we apply the function to the top of the list and add it to a new list. To apply the function
+;to the other list items recursively call this method.
+
 (define (reduce fun lst)
   (cond
   [(empty? lst) '()]  
   [(equal?(procedure? fun) #f) '()]
-  [else (cons(fun (car lst))
-          (reduce fun (cdr lst)))]))
+  [else (cond(fun(car lst)
+        (reduce fun (cdr lst))))]))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;Pow function;;;;;;;;;;;;;;;;;;;;;;;;;
