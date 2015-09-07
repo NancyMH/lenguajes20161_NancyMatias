@@ -1,9 +1,12 @@
 #lang plai
-; Metodo powerset
+;;;;;;; Powerset function doesn't works;;;;;;;;;;
+;For this function, it just works for the base case. If list is empty, we return a list with a element, in this case
+; an empty list
+
 (define (powerset lst)
   (cond
     [(empty? lst) '(())]
-    [else('(cons(car lst)) powerset(cdr lst))]))
+  ;  [else('(cons(car lst)) powerset(cdr lst))]))
 
 (test (powerset '()) '(()))
 ;(test (powerset '(1 2)) '((1 2)(1)(2)()))
