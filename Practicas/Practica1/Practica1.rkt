@@ -1,11 +1,14 @@
 #lang plai
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;No funciona;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;; Powerset function doesn't works;;;;;;;;;;
 ;For this function, it just works for the base case. If list is empty, we return a list with a element, in this case
 ; an empty list
 
 (define (powerset lst)
   (cond
-    [(empty? lst) '(())]
+    [(empty? lst) '(())]))
   ;  [else('(cons(car lst)) powerset(cdr lst))]))
 
 (test (powerset '()) '(()))
@@ -24,14 +27,16 @@
   (cond
   [(empty? lst) '()]  
   [(equal?(procedure? fun) #f) '()]
-  [else (cond(fun(car lst)
-        (reduce fun (cdr lst))))]))
+  [else (cons(fun (car lst))
+          (reduce fun (cdr lst)))]))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;Pow function;;;;;;;;;;;;;;;;;;;;;;;;;
 ;In this function, we take the base cases; first, if the user gives us a base with value 0, just return zero. 
 ;If the exponent is 0, we return 1 for the law of exponents. Unless the exponent is distinct of zero, multiply the 
 ;base and we call the function recursively pow with a exponent less 1.
+
 
 (define (pow n m)
   (cond
@@ -68,23 +73,28 @@
 ;number) and we verify if that result gives us the number we divided,if this happens it means that the second number is a divisor
 ;of the first number and return 1, otherwise return 0
 
+
 (define (divide num1 num2)
   (if ( = num1 ( * (floor (/ num1 num2)) num2))1 0))
+
 
 
 ;;;;;Auxiliar function to count the number of dividers;;;;;
 ;Call the function split to see if a number is a divisor of another , and if so will increase by 1 the counter of dividers, which
 ;starts at zero, otherwise keep looking dividers number.
 
+
 (define (divisores num div)
     (if (= div 0)
         0
    (+ (divide num div)(divisores num(- div 1)))))
+
    
    
 ;;;;;Auxiliar function to determine if a number is prime or not;;;;;;
 ;This get the total number of dividers that has a number, through the call to the function dividers, if the number has only two 
 ;dividers then will return #t , indicating that the number is prime, otherwise it will return #f
+
 
 (define (esprimo n)
 (if (= (divisores n n) 2) #t #f))
@@ -98,11 +108,15 @@
 (test(primes 1) '())
 
 
+
+;;;;;;;;;;Función zip;;;;;;;;;
+
 ;;;;;;;;;;zip Function;;;;;;;;;
 ;In this function we going to have a list of sub-lists from two lists that happen to us as a parameter.The first thing to do is 
 ;verify that none of the lists that happen to us is empty, if there is empty then return an empty list because we can not attach
 ;an empty list with another list. If we are not empty lists, we will form a list with a sublist with the head of each of the
 ;lists be upgraded and re-call this method to do the same again with the rest of the lists.
+
 
 (define (zip l1 l2)
   (cond
@@ -119,18 +133,15 @@
 (test(zip '(7 9) '(15 21 25 37)) '((7 15) (9 21)))
 (test(zip '(50 100 150) '()) '())
 
+
+
   
-<<<<<<< HEAD
-;Función  every?
-;
-=======
 ;;;;;;;;;;;;;;;;;;; Every? function;;;;;;;;;;;;;;;;;;;;;
 ;First, we'll request two arguments for this function, a predicate and a list. We should check if all elements from list
 ;are of type predicate, it can be a number, a symbol, etc. If list is empty simply we return true; 
 ;if one element isn't of type predicate, we return false, if not we should check element by element and compare with
 ;the predicate. For this we'll call recursively to the function every? with the rest of list.
 
->>>>>>> 0d5cf4a2c6cfd28316712ca86a4e9f5f648275bd
 (define (every? pred lst)
   (cond
     [(empty? lst) #t]
@@ -216,8 +227,6 @@
 (test (mconcat '() '()) '())
 (test (mconcat '() '(1 2 4 5)) '(1 2 4 5))
 
-<<<<<<< HEAD
-=======
 
 ;;;;;;;;;;mmap function;;;;;;;;;;
 ;First we have to verify that the parameter that is expected to be a function really is, if not a function there will be nothing
@@ -240,4 +249,3 @@
 (test (mmap cdr '((1 2 3) (4 5 6) (7 8 9))) '((2 3) (5 6) (8 9)))
 (test (mmap #f '(50 40 30 20 10)) '())
 
->>>>>>> 0d5cf4a2c6cfd28316712ca86a4e9f5f648275bd
