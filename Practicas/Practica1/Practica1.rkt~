@@ -6,7 +6,7 @@
     [else('(cons(car lst)) powerset(cdr lst))]))
 
 (test (powerset '()) '(()))
-(test (powerset '(1 2)) '((1 2)(1)(2)()))
+;(test (powerset '(1 2)) '((1 2)(1)(2)()))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;No funciona;;;;;;;;;;;;;;;;;;;;;;;;
 (define (reduce fun lst)
@@ -75,8 +75,7 @@
 (test(zip '(50 100 150) '()) '())
 
   
-;Función  every?
-;
+;Metodo every?
 (define (every? pred lst)
   (cond
     [(empty? lst) #t]
@@ -138,3 +137,14 @@
 (test (mconcat '() '()) '())
 (test (mconcat '() '(1 2 4 5)) '(1 2 4 5))
 
+;(define (primes num);Siempre devuelve '()
+(define (zip l1 l2)
+  (cond
+    [(empty? l1) '()]
+    [(empty? l2) '()]
+    [else 
+     (define p (cons(car l1) (car l2)))
+     (zip (cdr l1) (cdr l2))]))
+;(test(zip '(1 2) '(3 4)) '(1 3) '(2 4))
+
+  
