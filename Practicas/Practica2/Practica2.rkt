@@ -1,3 +1,4 @@
+
 #lang plai
 ;Array
 (define-type Array
@@ -18,9 +19,14 @@
 (2D-Point 1 (sqrt 2))
 ;FIGURE
 (define-type Figure 
-  [Circle (2D-Point (a real?) (b real?)) (radio real?)]
-)
+  [Circle (pos Position?) (radio real?)]
+  [Square (pos Position?) (longitud real?)]
+  [Rectangle (pos Position?) (ancho real?) (largo real?)]
+)  
 (Circle (2D-Point 2 2) 2)
+(Square (2D-Point 0 3) 3)
+(Rectangle (2D-Point 0 2) 2 3)
+
 
 
 
