@@ -1,10 +1,11 @@
-
 #lang plai
+
 ;Array
 (define-type Array
   [MArray (length number?) (lst list?)])
 (MArray 4 '(1 2 3)) 
 (MArray 6 '(a a a d 4 d))
+
 
 ;MList
 (define-type MList
@@ -12,11 +13,25 @@
   [MCons (element number?) (a MList?)])
 (MEmpty)
 (MCons 1 (MCons 2 (MCons 3 (MEmpty))))
+
+
+;NTree
+(define-type NTree
+  [TLEmpty]
+  [NodeN (element any?) (lst list?)])
+(NodeN 1 (list (TLEmpty) (TLEmpty) (TLEmpty)))
+(NodeN 1 (list (NodeN 2 (list (TLEmpty)))
+               (NodeN 3 (list (TLEmpty)))
+               (NodeN 4 (list (TLEmpty) (TLEmpty) (TLEmpty)))))
+
+
 ;POSITION
 (define-type Position
   [2D-Point (number1 real?) (number2 real?)])
 (2D-Point 0 0)
 (2D-Point 1 (sqrt 2))
+
+
 ;FIGURE
 (define-type Figure 
   [Circle (pos Position?) (radio real?)]
