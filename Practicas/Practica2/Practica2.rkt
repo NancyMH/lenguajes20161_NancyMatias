@@ -2,6 +2,9 @@
 
 ;SECCION 1:
 
+; Tipo any?
+(define (any? var) #t) 
+
 ;Array
 (define-type Array
   [MArray (length number?) (lst list?)])
@@ -85,5 +88,17 @@
 (test (area (Circle (2D-Point 5 5) 4)) 50.2656)
 (test (area (Square (2D-Point 0 0) 20)) 400)
 (test (area (Rectangle (2D-Point 3 4) 5 10)) 50)
+
+;Marray2Mlist
+(define (MArray2MList arr)
+  (type-case Array arr
+    [MArray (tam list) 
+            (cond 
+              [(zero? tam) (MEmpty)]
+              [else(MCons (cdr list) MArray2MList(arr))] )]
+     
+ ))
+(test (MArray2MList (MArray 0 '())) (MEmpty))
+(test (MArray2MList (MArray 5 '("a" "b"))) (MCons "a" (MCons "b" (MEmpty))))
 
 
