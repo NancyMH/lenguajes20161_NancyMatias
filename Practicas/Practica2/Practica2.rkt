@@ -56,6 +56,33 @@
 (mapML add1 (MCons 7 (MCons 4 (MEmpty))))
 (mapML (lambda (x) (* x x)) (MCons 10 (MCons 3 (MEmpty))))
 
+;lengthML
+(define (lengthML lst)
+  (type-case MList lst
+    [MEmpty () 0]
+    [MCons (cabeza resto)
+           (+ 1 (lengthML resto))]))
+(test (lengthML (MEmpty)) 0)
+(test (lengthML (MCons 7 (MCons 4 (MEmpty)))) 2)
 
+;concatML
+(define (concatML lst1 lst2)
+  (type-case MList lst1
+    [MEmpty () lst2]
+    [MCons (cabeza resto)
+            (MCons cabeza (concatML resto lst2))]))
+(test (concatML (MCons 7 (MCons 4 (MEmpty))) (MCons 1 (MEmpty))) (MCons 7 (MCons 4 (MCons 1 (MEmpty))))) 
 
+(define pi 3.1415926535897932)
+
+;area
+(define (area figura)
+  (type-case Figure figura
+    [Circle (pto rdio) (* pi (* rdio rdio))]
+    [Square (pto tam) (* tam tam)]
+    [Rectangle (pto a l) (* a l)]
+ ))
+(test (area (Circle (2D-Point 5 5) 4)) 50.2656)
+(test (area (Square (2D-Point 0 0) 20)) 400)
+(test (area (Rectangle (2D-Point 3 4) 5 10)) 50)
 
