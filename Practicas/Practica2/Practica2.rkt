@@ -1,5 +1,7 @@
 #lang plai
 
+;SECCION 1:
+
 ;Array
 (define-type Array
   [MArray (length number?) (lst list?)])
@@ -42,6 +44,17 @@
 (Square (2D-Point 0 3) 3)
 (Rectangle (2D-Point 0 2) 2 3)
 
+
+;SECCION 2
+
+(define (mapML fun lst)
+  (type-case MList lst
+    [MEmpty () (MEmpty)]
+    [MCons (num lst)
+           (MCons (fun num) (mapML fun lst))]))
+
+(mapML add1 (MCons 7 (MCons 4 (MEmpty))))
+(mapML (lambda (x) (* x x)) (MCons 10 (MCons 3 (MEmpty))))
 
 
 
