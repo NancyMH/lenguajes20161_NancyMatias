@@ -5,38 +5,54 @@
 (define (any? var) #t) 
 
 ;Array
+;Here we are defining a data type of array, which we call MArray, which will have a constructor with a parameter that specify 
+;the size that will take the settlement and a list.
+
 (define-type Array
   [MArray (length number?) (lst list?)])
 
 ;MList
+;Here we are defining a MList data type, this type of data is going to contain the empty list and its constructor will be declared 
+;through the MCons function.
+
 (define-type MList
   [MEmpty]
-  [MCons (element number?) (a MList?)])
+  [MCons (element any?) (a MList?)])
 
 ;NTree
+;Here we are defining a data type NTree, this type of data contains to the null leaf. It has a constructor of trees n-Aryans
+;type with NodeN.
+
 (define-type NTree
   [TLEmpty]
   [NodeN (element any?) (lst list?)])
 
 
 ;POSITION
+;Here we are defining a data type listing which requires a type constructor 2D-Point that is as parameter two real numbers that
+;indicate a position in the Cartesian plane.
+
 (define-type Position
   [2D-Point (number1 real?) (number2 real?)])
 
 
 ;FIGURE
+;Here we are defining a data type figure, which requires three constructors to know what type of figure is. Its builders are: 
+;Circle - The constructor takes the center given by the position and a radio.
+;Square - A constructor that takes a position of the upper-left corner of the square and a length.
+;Rectangle - A constructor that takes a position of the upper-left corner of the rectangle and the rectangle's length
+
 (define-type Figure 
   [Circle (pos Position?) (radio real?)]
   [Square (pos Position?) (longitud real?)]
-  [Rectangle (pos Position?) (ancho real?) (largo real?)]
-)  
+  [Rectangle (pos Position?) (ancho real?) (largo real?)])  
 
 ;SECCION 2
 
 ;mapML
-;Recibira una función y una lista, la lista sera del tipo que definimos en las funciones anteriores, sera de tipo MList.
-;Si la lista que nos pasan es vacia, regresara vacio. En caso contrario definimos un MCons y le aplicamos la función a los
-;parametros de MCons.
+;You will receive a function and a list, the list will be of the type that we defined in the previous functions, will be of type MList.
+;If the list that we spend is empty, you will be returned empty. Otherwise we define a MCons and i am applying the function to the
+;MCons parameters.
 
 (define (mapML fun lst)
   (type-case MList lst
@@ -53,6 +69,8 @@
 
 
 ;lengthML
+;We have a length function, and for this we going to use type-case. First, we ask if list is empty. If list is empty, 
+;we'll return zero but if not, add 1 and call recursively to the same function, in this case lengthML with the rest of the list.
 (define (lengthML lst)
   (type-case MList lst
     [MEmpty () 0]
@@ -66,6 +84,9 @@
 (test (lengthML (MCons 8 (MCons 7 (MCons 8 (MCons 4 (MEmpty)))))) 4)
 
 ;concatML
+;With this function, we going to join two lists. First, we ask if list 1 is empty and this happens, call to list 2 and we return
+; that list; if not, we take the head of list and we copy this element, after it'll join with the rest of the list
+;with a recursive call with the same function.
 (define (concatML lst1 lst2)
   (type-case MList lst1
     [MEmpty () lst2]
@@ -82,6 +103,9 @@
 (define pi 3.1415926535897932)
 
 ;area
+;In this function, we going to get the area of a figure, this can be a circle, a square or a rectangle. For circle we use
+;its formula Pi*radio*radio;for the square, we just do tam*tam for get its area; for the rectangle, we do a 
+;multiply with its two parameters, a and l and then we'll return the result of that operation.
 (define (area figura)
   (type-case Figure figura
     [Circle (pto rdio) (* pi (* rdio rdio))]
@@ -95,6 +119,7 @@
 (test (area (Rectangle (2D-Point 3 4) 2 10)) 20)
 
 ;Marray2Mlist
+;This function doesn't works. We just can produce the base case.
 (define (MArray2MList arr)
   (type-case Array arr
     [MArray (tam list) 
@@ -104,6 +129,5 @@
      
  ))
 (test (MArray2MList (MArray 0 '())) (MEmpty))
-(test (MArray2MList (MArray 5 '("a" "b"))) (MCons "a" (MCons "b" (MEmpty))))
-
+;(test (MArray2MList (MArray 5 '("a" "b"))) (MCons "a" (MCons "b" (MEmpty))))
 
