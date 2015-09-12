@@ -5,38 +5,54 @@
 (define (any? var) #t) 
 
 ;Array
+;Here we are defining a data type of array, which we call MArray, which will have a constructor with a parameter that specify 
+;the size that will take the settlement and a list.
+
 (define-type Array
   [MArray (length number?) (lst list?)])
 
 ;MList
+;Here we are defining a MList data type, this type of data is going to contain the empty list and its constructor will be declared 
+;through the MCons function.
+
 (define-type MList
   [MEmpty]
   [MCons (element number?) (a MList?)])
 
 ;NTree
+;Here we are defining a data type NTree, this type of data contains to the null leaf. It has a constructor of trees n-Aryans
+;type with NodeN.
+
 (define-type NTree
   [TLEmpty]
   [NodeN (element any?) (lst list?)])
 
 
 ;POSITION
+;Here we are defining a data type listing which requires a type constructor 2D-Point that is as parameter two real numbers that
+;indicate a position in the Cartesian plane.
+
 (define-type Position
   [2D-Point (number1 real?) (number2 real?)])
 
 
 ;FIGURE
+;Here we are defining a data type figure, which requires three constructors to know what type of figure is. Its builders are: 
+;Circle - The constructor takes the center given by the position and a radio.
+;Square - A constructor that takes a position of the upper-left corner of the square and a length.
+;Rectangle - A constructor that takes a position of the upper-left corner of the rectangle and the rectangle's length
+
 (define-type Figure 
   [Circle (pos Position?) (radio real?)]
   [Square (pos Position?) (longitud real?)]
-  [Rectangle (pos Position?) (ancho real?) (largo real?)]
-)  
+  [Rectangle (pos Position?) (ancho real?) (largo real?)])  
 
 ;SECCION 2
 
 ;mapML
-;Recibira una función y una lista, la lista sera del tipo que definimos en las funciones anteriores, sera de tipo MList.
-;Si la lista que nos pasan es vacia, regresara vacio. En caso contrario definimos un MCons y le aplicamos la función a los
-;parametros de MCons.
+;You will receive a function and a list, the list will be of the type that we defined in the previous functions, will be of type MList.
+;If the list that we spend is empty, you will be returned empty. Otherwise we define a MCons and i am applying the function to the
+;MCons parameters.
 
 (define (mapML fun lst)
   (type-case MList lst
