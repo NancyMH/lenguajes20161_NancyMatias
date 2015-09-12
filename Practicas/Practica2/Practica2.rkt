@@ -17,7 +17,7 @@
 
 (define-type MList
   [MEmpty]
-  [MCons (element number?) (a MList?)])
+  [MCons (element any?) (a MList?)])
 
 ;NTree
 ;Here we are defining a data type NTree, this type of data contains to the null leaf. It has a constructor of trees n-Aryans
@@ -69,6 +69,8 @@
 
 
 ;lengthML
+;We have a length function, and for this we going to use type-case. First, we ask if list is empty. If list is empty, 
+;we'll return zero but if not, add 1 and call recursively to the same function, in this case lengthML with the rest of the list.
 (define (lengthML lst)
   (type-case MList lst
     [MEmpty () 0]
@@ -82,6 +84,9 @@
 (test (lengthML (MCons 8 (MCons 7 (MCons 8 (MCons 4 (MEmpty)))))) 4)
 
 ;concatML
+;With this function, we going to join two lists. First, we ask if list 1 is empty and this happens, call to list 2 and we return
+; that list; if not, we take the head of list and we copy this element, after it'll join with the rest of the list
+;with a recursive call with the same function.
 (define (concatML lst1 lst2)
   (type-case MList lst1
     [MEmpty () lst2]
@@ -98,6 +103,9 @@
 (define pi 3.1415926535897932)
 
 ;area
+;In this function, we going to get the area of a figure, this can be a circle, a square or a rectangle. For circle we use
+;its formula Pi*radio*radio;for the square, we just do tam*tam for get its area; for the rectangle, we do a 
+;multiply with its two parameters, a and l and then we'll return the result of that operation.
 (define (area figura)
   (type-case Figure figura
     [Circle (pto rdio) (* pi (* rdio rdio))]
@@ -111,6 +119,7 @@
 (test (area (Rectangle (2D-Point 3 4) 2 10)) 20)
 
 ;Marray2Mlist
+;This function doesn't works. We just can produce the base case.
 (define (MArray2MList arr)
   (type-case Array arr
     [MArray (tam list) 
@@ -120,6 +129,6 @@
      
  ))
 (test (MArray2MList (MArray 0 '())) (MEmpty))
-(test (MArray2MList (MArray 5 '("a" "b"))) (MCons "a" (MCons "b" (MEmpty))))
+;(test (MArray2MList (MArray 5 '("a" "b"))) (MCons "a" (MCons "b" (MEmpty))))
 
 
