@@ -1,40 +1,27 @@
 #lang plai
 
 ;SECCION 1:
-
-; Tipo any?
+;This is a function call any?. If variable is of any type of racket, it'll return true.
 (define (any? var) #t) 
 
 ;Array
 (define-type Array
   [MArray (length number?) (lst list?)])
-(MArray 4 '(1 2 3)) 
-(MArray 6 '(a a a d 4 d))
-
 
 ;MList
 (define-type MList
   [MEmpty]
   [MCons (element number?) (a MList?)])
-(MEmpty)
-(MCons 1 (MCons 2 (MCons 3 (MEmpty))))
-
 
 ;NTree
 (define-type NTree
   [TLEmpty]
   [NodeN (element any?) (lst list?)])
-(NodeN 1 (list (TLEmpty) (TLEmpty) (TLEmpty)))
-(NodeN 1 (list (NodeN 2 (list (TLEmpty)))
-               (NodeN 3 (list (TLEmpty)))
-               (NodeN 4 (list (TLEmpty) (TLEmpty) (TLEmpty)))))
 
 
 ;POSITION
 (define-type Position
   [2D-Point (number1 real?) (number2 real?)])
-(2D-Point 0 0)
-(2D-Point 1 (sqrt 2))
 
 
 ;FIGURE
@@ -43,13 +30,10 @@
   [Square (pos Position?) (longitud real?)]
   [Rectangle (pos Position?) (ancho real?) (largo real?)]
 )  
-(Circle (2D-Point 2 2) 2)
-(Square (2D-Point 0 3) 3)
-(Rectangle (2D-Point 0 2) 2 3)
-
 
 ;SECCION 2
 
+;mapML
 (define (mapML fun lst)
   (type-case MList lst
     [MEmpty () (MEmpty)]
@@ -65,8 +49,12 @@
     [MEmpty () 0]
     [MCons (cabeza resto)
            (+ 1 (lengthML resto))]))
+;testing
 (test (lengthML (MEmpty)) 0)
 (test (lengthML (MCons 7 (MCons 4 (MEmpty)))) 2)
+(test (lengthML (MCons 1 (MEmpty))) 1)
+(test (lengthML (MCons 3 (MCons 6 (MCons 8 (MEmpty))))) 3)
+(test (lengthML (MCons 8 (MCons 7 (MCons 8 (MCons 4 (MEmpty)))))) 4)
 
 ;concatML
 (define (concatML lst1 lst2)
@@ -74,8 +62,14 @@
     [MEmpty () lst2]
     [MCons (cabeza resto)
             (MCons cabeza (concatML resto lst2))]))
+;testing
+(test (concatML (MCons 7 (MCons 10 (MEmpty))) (MEmpty)) (MCons 7 (MCons 10 (MEmpty)))) 
 (test (concatML (MCons 7 (MCons 4 (MEmpty))) (MCons 1 (MEmpty))) (MCons 7 (MCons 4 (MCons 1 (MEmpty))))) 
+(test (concatML (MEmpty) (MEmpty)) (MEmpty))
+(test (concatML (MEmpty) (MCons 1 (MEmpty))) (MCons 1 (MEmpty)))
+(test (concatML (MCons 11 (MCons 17 (MEmpty))) (MEmpty)) (MCons 11 (MCons 17 (MEmpty))))
 
+;Define a function call it pi for that value y then can use it with the area of the circle
 (define pi 3.1415926535897932)
 
 ;area
@@ -85,9 +79,11 @@
     [Square (pto tam) (* tam tam)]
     [Rectangle (pto a l) (* a l)]
  ))
-(test (area (Circle (2D-Point 5 5) 4)) 50.2656)
-(test (area (Square (2D-Point 0 0) 20)) 400)
+(test (area (Circle (2D-Point 0 0) 6)) 113.0976)
+(test (area (Square (2D-Point 0 1) 5)) 25)
+(test (area (Square (2D-Point 0 0) 12)) 144)
 (test (area (Rectangle (2D-Point 3 4) 5 10)) 50)
+(test (area (Rectangle (2D-Point 3 4) 2 10)) 20)
 
 ;Marray2Mlist
 (define (MArray2MList arr)
