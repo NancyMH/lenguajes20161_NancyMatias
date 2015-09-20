@@ -20,3 +20,13 @@
     [(empty? lst-zones) empty]
     [(equal? name (car lst-zones)) car lst-zones]
     [else (get-zone name (cdr lst-zones))]))
+
+;Metodo que obtiene el numero de nodos en el arbol
+
+(define (nlBT arbol)
+  (type-case BTree arbol
+    [EmptyBT () 0]
+    [BNode (c l e r) 
+           (+ 1 (+ (nlBT l) (nlBT r)))]))
+(test (nlBT (EmptyBT)) 0)
+(test(nlBT (BNode < (BNode < (EmptyBT) 3 (EmptyBT)) 1 (BNode < (EmptyBT) 2 (EmptyBT)))) 3)
