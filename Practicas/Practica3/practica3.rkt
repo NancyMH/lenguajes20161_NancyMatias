@@ -75,3 +75,17 @@
            (BNode (fun e) (mapBT fun l) (mapBT fun r))]))
 (test (mapBT add1 (EmptyBT))(EmptyBT))
 ;(test (mapBT add1 (BNode < (EmptyBT) 1 (BNode < (EmptyBT) 2 (EmptyBT)))) (BNode < (EmptyBT) 2 (BNode < (EmptyBT) 3 (EmptyBT))))
+
+; Preorden del árbol, aún no funcionando
+(define (preorderBT arbol-base)
+  (type-case BTree arbol-base
+    [EmptyBT () '()]
+    [BNode (c l e r)
+             ;[(not (or (EmptyBT? l) (EmptyBT? r))) (cons e ((preorderBT l) (preorderBT r)))]
+             ;[else '()])]))
+           (cond
+             [(EmptyBT? l) (preorderBT r)]
+             [(EmptyBT? r) (preorderBT l)]
+             [else (cons e ((preorderBT l) (preorderBT r)))])]))
+             ;(cons e (aux l r))]))
+(test (preorderBT arbol-base) '("F" "B" "A" "D" "C" "E" "G" "I" "H"))
