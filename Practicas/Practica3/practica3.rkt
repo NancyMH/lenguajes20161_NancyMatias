@@ -130,7 +130,48 @@
     
 
 
-;Hojas no vacías
+;For this function, we'll recibe a tree of type BTree, we check if tree is empty and if this happen, we return a empty list.
+;if not, we call to the function append of Racket, we'll take the element where we are and we'll call recursively to the function
+;with the left and right subtrees, because the preorder in a tree is in this way: root, left child and right child 
+;such that the childs are the sub-trees.
+
+(define (preorderBT arbol)
+  (type-case BTree arbol
+    [EmptyBT () '()]
+    [BNode (c l e r)
+           (append (list e)(preorderBT l)(preorderBT r))]))
+;test
+(test (preorderBT arbol-base) '("F" "B" "A" "D" "C" "E" "G" "I" "H"))
+
+;The inorderBT function does this: if tree is empty, we'll return a empty list
+;if not, we'll use the append function with this elements, first we'll call recursively to the function with left subtree,
+;we'll add the element root and again we'll call recursively to the function with right subtree.
+;This format is because inorder in a tree is with left subtree, root and right subtree.
+(define (inorderBT arbol)
+  (type-case BTree arbol
+    [EmptyBT () '()]
+    [BNode (c l e r)
+           (append (inorderBT l) (list e) (inorderBT r))]))
+;test
+(test (inorderBT arbol-base) '("A" "B" "C" "D" "E" "F" "G" "H" "I"))
+
+;The posorderBT function works in this way:
+;If tree is empty, we'll return a empty list;
+;If not, we'll call recursively to the function with the left and right trees and we'll append to the root in a list;
+;This format is because posorder is: left subtree, right subtree and root 
+(define (posorderBT arbol)
+  (type-case BTree arbol
+    [EmptyBT () '()]
+    [BNode (c l e r)
+           (append (posorderBT l) (posorderBT r) (list e))]))
+    
+(test (posorderBT arbol-base) '("A" "C" "E" "D" "B" "H" "I" "G" "F"))
+
+
+;To this function, we'll receive a tree:
+;If tree is empty, we'll return zero.
+;If not,we'll ask if left or right tree isn't empty. If this happen,  we'll checkout with the same trees because we'll know 
+;that node isn't a leaf. In otherwise, we'll add 1.
 (define (nlBT arbol)
   (type-case BTree arbol
     [EmptyBT () 0]
@@ -138,18 +179,18 @@
            (cond
              [(not (or (EmptyBT? l) (EmptyBT? r))) (+ (nlBT l) (nlBT r))]
              [else 1])]))
+;test
 (test (nlBT (EmptyBT)) 0)
 (test (nlBT (BNode < (EmptyBT) 9 (EmptyBT))) 1)
 (test (nlBT (BNode < (BNode < ( BNode < (EmptyBT) 4 (EmptyBT))6 (BNode < (EmptyBT) 5 (EmptyBT))) 1 (BNode < (EmptyBT) 2 (EmptyBT)))) 3)
 (test (nlBT (BNode < (BNode < (BNode < (BNode < (EmptyBT) 5 (EmptyBT)) 8 (EmptyBT)) 10 (EmptyBT)) 1 (EmptyBT)))1)
 (test (nlBT (BNode < (EmptyBT) 18 (BNode < (EmptyBT) 20 (EmptyBT)))) 1)
 
-;(printBT (bnn (bnn ebt 1 ebt) 2 (bnn ebt 3 (bnn ebt 4 ebt))))
-;(printBT ( bnn (bnn (bnn ebt 4 ebt) 6 (bnn ebt 5 ebt)) 1 (bnn ebt 2 ebt)))
-;(printBT ( bnn (bnn ebt 3 ebt) 1 (bnn ebt 2 ebt)))
-;(printBT (bnn (bnn ebt 1 ebt) 2 (bnn ebt 3 (bnn ebt 4 ebt))))
 
-;Nodos totales
+
+;To this function, we'll receive a tree:
+;If tree is empty, we'll return zero. If not, we'll know that at least we have a node and we'll add 1 and then we'll call
+;the elements of left subtree and right subtree with a sum.
 (define (nnBT arbol)
   (type-case BTree arbol
     [EmptyBT () 0]
@@ -161,7 +202,12 @@
 (test (nnBT (BNode < (BNode < (EmptyBT) 7 (EmptyBT)) 10 (EmptyBT))) 2)
 (test (nnBT (BNode < (EmptyBT) 10 (EmptyBT))) 1)
 
-;Nodos internos
+;To this function, we'll receive a tree:
+;If tree is empty, we'll return zero.
+;If not,we'll ask if this element is a leaf, and for this we'll check if leaf doesn't have a left and right subtree and
+;we won't add nothing. Otherwise we'll know that that isn't a leaf and we'll add 1 and then we'll call
+;the elements of left subtree and right subtree with a sum.
+
 (define (ninBT arbol)
   (type-case BTree arbol
     [EmptyBT () 0]
@@ -169,32 +215,32 @@
            (cond
              [(and (EmptyBT? l) (EmptyBT? r)) 0]
              [else (+ 1 (+ (ninBT l) (ninBT r)))])]))
-
+;test
 (test (ninBT (EmptyBT)) 0)
 (test (ninBT (BNode < (EmptyBT) 1 (EmptyBT))) 0)
 (test (ninBT (BNode < (BNode < (EmptyBT) 3 (EmptyBT)) 1 (BNode < (EmptyBT) 2 (EmptyBT)))) 1)
 (test (ninBT (BNode < (BNode < (EmptyBT) 7 (EmptyBT)) 10 (EmptyBT))) 1)
 (test (ninBT (BNode < (BNode < ( BNode < (EmptyBT) 5 (EmptyBT))4 (BNode < (EmptyBT) 9 (EmptyBT))) 12 (BNode < (EmptyBT) 6 (EmptyBT)))) 2)
 
-;mapBT
+
+;For this, we'll receive two parameters, a function and a tree
+;If tree is empty, we'll return a list with a EmptyBT element.
+;If not, we'll checkout if that node is a leaf, and if this happen, we'll return the node with their elements, such as 
+; the procedure, the leaf subtree, the application to the element and the right subtree;
+;If that node isn't a leaf, we'll return a node with its procedure and we'll call recursively to the function with parameters
+; function and leaf tree, and we'll apply the function to the element of that node and again we'll call recursively
+; to the function mapBT with its function and right subtree.
 (define (mapBT fun arbol)
   (type-case BTree arbol
     [EmptyBT () (EmptyBT)]
     [BNode (c l e r)
-           (BNode (fun e) (mapBT fun l) (mapBT fun r))]))
-(test (mapBT add1 (EmptyBT))(EmptyBT))
-;(test (mapBT add1 (BNode < (EmptyBT) 1 (BNode < (EmptyBT) 2 (EmptyBT)))) (BNode < (EmptyBT) 2 (BNode < (EmptyBT) 3 (EmptyBT))))
+           (cond 
+             [(and (EmptyBT? l) (EmptyBT? r)) (BNode c l (fun e) r)]
+             [else (BNode c (mapBT fun l) (fun e) (mapBT fun r))])]))
 
-; Preorden del árbol, aún no funcionando
-(define (preorderBT arbol-base)
-  (type-case BTree arbol-base
-    [EmptyBT () '()]
-    [BNode (c l e r)
-             ;[(not (or (EmptyBT? l) (EmptyBT? r))) (cons e ((preorderBT l) (preorderBT r)))]
-             ;[else '()])]))
-           (cond
-             [(EmptyBT? l) (preorderBT r)]
-             [(EmptyBT? r) (preorderBT l)]
-             [else (cons e ((preorderBT l) (preorderBT r)))])]))
-             ;(cons e (aux l r))]))
-(test (preorderBT arbol-base) '("F" "B" "A" "D" "C" "E" "G" "I" "H"))
+(test (mapBT sub1 (BNode < (EmptyBT) 3 (EmptyBT))) (BNode < (EmptyBT) 2 (EmptyBT)))
+(test (mapBT add1 (EmptyBT))(EmptyBT))
+(test (mapBT add1 (BNode < (EmptyBT) 5 (BNode < (EmptyBT) 7 (EmptyBT)))) (BNode < (EmptyBT) 6 (BNode < (EmptyBT) 8 (EmptyBT))))
+(test (mapBT sub1 (BNode < (EmptyBT) 3 (EmptyBT))) (BNode < (EmptyBT) 2 (EmptyBT)))
+(test (mapBT sub1 (BNode < (EmptyBT) 5 (BNode < (EmptyBT) 7 (EmptyBT)))) (BNode < (EmptyBT) 4 (BNode < (EmptyBT) 6 (EmptyBT))))
+
