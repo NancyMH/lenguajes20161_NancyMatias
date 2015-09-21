@@ -67,6 +67,35 @@
  (maximum 67.5 75.0)))
 
 
+
+;;;Function get-zone
+;From a list of zones we are going to get data from a specific zone in which we would like, (which we do through this function,
+;which you will receive as parameters the list of zones and the name of a zone) for which, first discovered that zone we are
+;looking for, comparing each name of the zones with the symbol that we received as a parameter. Once we know the name of the zone
+;where we want, we proceed to look for it in the list of zones, for which we searched first in the head, if it's there, we 
+;returned the head, but, we continue the search in the rest of the list.
+
+(define (get-zone symbol lst-zones)
+  (cond
+    [(empty? lst-zones) empty]
+    [(and (equal? 'resting symbol) (resting? (car lst-zones))) (car lst-zones)]
+    [(and (equal? 'warm-up symbol) (warm-up? (car lst-zones))) (car lst-zones)]
+    [(and (equal? 'fat-burning symbol) (fat-burning? (car lst-zones))) (car lst-zones)]
+    [(and (equal? 'aerobic symbol) (aerobic? (car lst-zones))) (car lst-zones)]
+    [(and (equal? 'anaerobic symbol) (anaerobic? (car lst-zones))) (car lst-zones)]
+    [(and (equal? 'maximum symbol) (maximum? (car lst-zones))) (car lst-zones)]
+    [else (get-zone symbol (cdr lst-zones))]))
+
+;Test
+(test (get-zone 'anaerobic my-zones) (anaerobic 154.0 166.0))
+(test (get-zone 'maximum my-zones) (maximum 167.0 180.0))
+(test (get-zone 'resting my-zones) (resting 50 114.0))
+(test (get-zone 'fat-burning my-zones) (fat-burning 128.0 140.0))
+(test (get-zone 'aerobic my-zones) (aerobic 141.0 153.0))
+(test (get-zone 'warm-up my-zones) (warm-up 115.0 127.0))
+
+
+
 ;Hojas no vacías
 (define (nlBT arbol)
   (type-case BTree arbol
