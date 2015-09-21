@@ -96,6 +96,40 @@
 
 
 
+;;bpm->zone function
+;It doesn't work
+(define (bpm->zone lst-frec lst-zones frec)
+  (cond
+    [(empty? lst-frec) empty]
+    [(empty? lst-zones) empty]
+    [else (status lst-zones frec)]))
+
+     
+;Auxiliary Function that return if a zone is is within the range of frequency
+;I am comparing the frequency that we are going to the range between minimum and maximum, once we see that if it comes, 
+;look for the item that matches that frequency in the zone list
+;It doesn't work
+(define (status lst-zones frec)
+  [type-case HRZ lst-zones
+    (resting(low high) (if (and (>= frec low) (<= frec high)) (car lst-zones) (search (cdr lst-zones) frec)))
+    (warm-up(low high) (if (and (>= frec low) (<= frec high)) (car lst-zones) (search (cdr lst-zones) frec)))
+    (fat-burning(low high) (if (and (>= frec low) (<= frec high)) (car lst-zones) (search (cdr lst-zones) frec)))
+    (aerobic(low high) (if (and (>= frec low) (<= frec high)) (car lst-zones) (search (cdr lst-zones) frec)))
+    (anaerobic(low high) (if (and (>= frec low) (<= frec high)) (car lst-zones) (search (cdr lst-zones) frec)))
+    (maximum(low high) (if (and (>= frec low) (<= frec high)) (car lst-zones) (search (cdr lst-zones) frec)))])
+
+
+;Auxiliary Function
+;I'm trying to find a number in a list of zones. If the list is empty zone sends an error
+;Always return "No element"
+(define (search my-zones num)
+    (cond
+      [(empty? my-zones) (error "No element")]
+      [(equal? num (car my-zones)) (car my-zones)]
+      [else (search (cdr my-zones) num)]))
+    
+
+
 ;Hojas no vacías
 (define (nlBT arbol)
   (type-case BTree arbol
