@@ -2,24 +2,70 @@
 
 (require "practica3-base.rkt")
 
-;;;No entiendo las formulas cual es el valor de i, 0.,4,?
-;;;Tampoco entiendo el problema, dado el minimo y el máximo hay que dar una zona?
-;(define (zone resting maximum)
+;;;Function zones
+;In this function We are going to obtain the minimum and maximum for each zone by applying the respective formulae.
+;The variable i in each formula will take a value between 0 and 4, where:
+;For warm-up i=0 
+;For fat-burning i= 1 
+;For aerobics i= 2 
+;For anaerobic i= 3 
+;For maximum i=4
 
-;Función auxiliar
-;(define (range rest max)
- ; (cond
-  ;  [(zero? max) rest]
-   ; [(zero? rest) ((range*0.5)-1)]
-    
-  
-;Tampoco entiendo el problema, pense que teniamos que buscar una zona que nos pasaban como parametro dentro de una lista de zonas, pero eso no
-;tiene sentido, además por el ejmplo puesto en la practica creo que lo que estaba haciendo en el código de abajo esta mal.
-(define (get-zone name lst-zones)
-  (cond
-    [(empty? lst-zones) empty]
-    [(equal? name (car lst-zones)) car lst-zones]
-    [else (get-zone name (cdr lst-zones))]))
+(define (zones rest max )
+    [list (resting rest (+ rest(- (* (range rest max) 0.5) 1)))
+          (warm-up (+ rest (* (range rest max) (+ 0.5 (* 0.1 0)))) (+ rest (- (* (range rest max) (+ 0.5 (* 0.1 1))) 1)))
+          (fat-burning (+ rest (* (range rest max) (+ 0.5 (* 0.1 1)))) (+ rest (- (* (range rest max) (+ 0.5 (* 0.1 2))) 1)))
+          (aerobic (+ rest (* (range rest max) (+ 0.5 (* 0.1 2)))) (+ rest (- (* (range rest max) (+ 0.5 (* 0.1 3))) 1)))
+          (anaerobic (+ rest (* (range rest max) (+ 0.5 (* 0.1 3)))) (+ rest (- (* (range rest max) (+ 0.5 (* 0.1 4))) 1)))
+          (maximum (+ rest (* (range rest max) (+ 0.5 (* 0.1 4)))) (+ rest (* (range rest max) (+ 0.5 (* 0.1 5)))))])
+
+
+;Auxiliary Function to get the range between the minimum and maximum, for which we will subtract the minimum to the maximum
+(define (range rest max)
+    (- max rest))
+
+;Define it for example
+(define my-zones (zones 50 180))
+
+;Test
+(test (zones 50 180)
+ (list
+ (resting 50 114.0)
+ (warm-up 115.0 127.0)
+ (fat-burning 128.0 140.0)
+ (aerobic 141.0 153.0)
+ (anaerobic 154.0 166.0)
+ (maximum 167.0 180.0)))
+
+(test (zones 20 80)
+ (list
+ (resting 20 49.0)
+ (warm-up 50.0 55.0)
+ (fat-burning 56.0 61.0)
+ (aerobic 62.0 67.0)
+ (anaerobic 68.0 73.0)
+ (maximum 74.0 80.0)))
+
+(test (zones 5 5)
+ (list (resting 5 4) (warm-up 5 4) (fat-burning 5 4) (aerobic 5 4) (anaerobic 5 4) (maximum 5 5)))
+
+(test (zones 100 500)
+ (list
+ (resting 100 299.0)
+ (warm-up 300.0 339.0)
+ (fat-burning 340.0 379.0)
+ (aerobic 380.0 419.0)
+ (anaerobic 420.0 459.0)
+ (maximum 460.0 500.0)))
+
+(test (zones 0 75)
+ (list (resting 0 36.5)
+ (warm-up 37.5 44.0)
+ (fat-burning 45.0 51.5)
+ (aerobic 52.5 59.0)
+ (anaerobic 60.0 66.5)
+ (maximum 67.5 75.0)))
+
 
 ;Hojas no vacías
 (define (nlBT arbol)
