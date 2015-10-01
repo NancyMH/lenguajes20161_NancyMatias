@@ -20,6 +20,4 @@ Su implementación de printML es erronea no están manejando correctamente los c
 
 No implementaron las funciones setvalueA, MArray2MList, printML, filterML, haversine, closest-building, buildings-at-distance y in-figure?.
 
-No tienen ninguna prueba.
-
 **Calificación: 5.5**
