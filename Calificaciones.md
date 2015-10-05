@@ -21,3 +21,9 @@ Su implementación de printML es erronea no están manejando correctamente los c
 No implementaron las funciones setvalueA, MArray2MList, printML, filterML, haversine, closest-building, buildings-at-distance y in-figure?.
 
 **Calificación: 5.5**
+
+### Practica 3
+No implementaron las funciones create-trackpoints, total-distance, average-hr,
+max-hr, collapse-trackpoints.
+
+**Calificación: 6**
