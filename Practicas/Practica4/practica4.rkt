@@ -5,9 +5,23 @@
 (print-only-errors true)
 
 (define (desugar expr)
-  ;; Implementar desugar
-  (error 'desugar "Not implemented"))
+  (type-case FAES expr
+    [numS (n) (num n)]
+    [withS (bindings body) (app (fun (map (lambda(x) (bind-name x)) bindings)
+                                     (desugar body))
+                                (map (lambda (x) (desugar (bind-val x))) bindings))]
+    [with*S (bindings body) (matryoshka bindings body)]
+    [idS (name) (id name)]
+    [funS(params body) (fun params (desugar body))]
+    [appS(fun lst) (app (desugar fun) (map desugar lst))]
+    [binopS(fun l r) (binop fun(desugar l) (desugar r))]))
+  
 
+(define (matryoshka bindings body)
+              (cond
+                  [(empty? bindings) (desugar body)]
+                  [else (app (fun bindings(matryoshka(cdr bindings)
+			(desugar bindings))))]))
 
 (test (desugar (parse '{+ 3 4})) (binop + (num 3) (num 4)))
 (test (desugar (parse '{+ {- 3 4} 7})) (binop + (binop - (num 3) (num 4)) (num 7)))
