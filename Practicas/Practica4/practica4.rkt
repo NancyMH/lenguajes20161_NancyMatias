@@ -31,8 +31,12 @@
   (desugar (parse sexp)))
 
 (define (interp expr env)
-  ;; Implementar interp
-  (error 'interp "Not implemented"))
+  (type-case FAE expr
+    [num (n) (numV n)]
+    [id (name) (#t)]
+    [fun (params body) (#t)]
+    [app (fun args) (#t)]
+    [binop (f l r) (#t)]))
 
 (define (rinterp expr)
   (interp expr (mtSub)))
