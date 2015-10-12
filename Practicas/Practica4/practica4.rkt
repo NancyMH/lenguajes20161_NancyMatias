@@ -13,7 +13,7 @@
     [with*S (bindings body) (matryoshka bindings body)]
     [idS (name) (id name)]
     [funS(params body) (fun params (desugar body))]
-    [appS(fun lst) (app (desugar fun) (map desugar lst))]
+    [appS(fun lst) (app (desugar fun) (desugar lst))]
     [binopS(fun l r) (binop fun(desugar l) (desugar r))]))
   
 
@@ -23,9 +23,18 @@
                   [else (app (fun bindings(matryoshka(cdr bindings)
 			(desugar bindings))))]))
 
+
+
+                                ;;;;;Tests;;;;;
+;NOTA: Si no detecta los tests al momento de ejecutarlo, hay que realizar las pruebas en la linea de comandos.
 (test (desugar (parse '{+ 3 4})) (binop + (num 3) (num 4)))
 (test (desugar (parse '{+ {- 3 4} 7})) (binop + (binop - (num 3) (num 4)) (num 7)))
 (test (desugar (parse '{with {{x {+ 5 5}}} x})) (app (fun '(x) (id 'x)) (list (binop + (num 5) (num 5))) ))
+(test (desugar (parse '(fun (x) x))) (fun '(x) (id 'x)))
+(test (desugar (numS 8)) (num 8))
+(test (parse '(fun (x) x)) (funS '(x) (idS 'x)))
+(test (desugar (idS 'n)) (id 'n))
+
 
 (define (cparse sexp)
   (desugar (parse sexp)))
