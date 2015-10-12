@@ -27,3 +27,20 @@ No implementaron las funciones create-trackpoints, total-distance, average-hr,
 max-hr, collapse-trackpoints.
 
 **Calificación: 6**
+
+## Tareas
+
+### Tarea 2
+
+Problema 1: No indican explicitamente como se definen los condicionales usando
+solamente funciones y aplicación de funciones, tambien su justificación
+de como obtener funciones recursivas usando combinador Y es minima.
+
+Problema 2: Java es glotón, su ejemplo es ortogonal a que el lenguaje sea perezoso o glotón, aun en Haskell al tratar de imprimir se tendría que hacer
+la evaluación de las expresiones.
+
+Problema 3: Sin contestar.
+
+Problema 4: Sin contestar.
+
+**Calificación: 3**
