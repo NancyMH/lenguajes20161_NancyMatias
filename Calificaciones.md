@@ -30,6 +30,16 @@ max-hr, collapse-trackpoints.
 
 ## Tareas
 
+### Tarea 1
+Problema I: Su explicación no es la correcta es n^2 porque tienen que recorrer
+casi toda el stack para obtener el valor a sustituir.
+Problema II: Según su expresion el alcance Ben daria el mismo resultado a
+el alcance estatico es decir 16 no 21 como dicen porque el valor mas antiguo
+de y es 2 y no 7.
+Problem III: Su forma de Bruijn es incorrecta.
+
+**Calificación: 5**
+
 ### Tarea 2
 
 Problema 1: No indican explicitamente como se definen los condicionales usando
