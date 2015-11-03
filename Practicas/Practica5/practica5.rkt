@@ -1,5 +1,23 @@
 #lang plai
 
+(define-type RCFAEL
+  [id (name symbol?)]
+  [num (n number?)]
+  [bool (exp boolean?)]
+  [Mlist (lst list?)                 
+         (car lst)
+         (cdr list?)]
+  [with (bindings (listof bind?))    
+         (body RCFAEL?)]
+  [rec (name-fun symbol?)           
+       (params RCFAEL?)
+       (body-fun RCFAEL?)]
+  [fun (params RCFAEL?)              
+       (body RCFAEL?)]
+;Faltan if y equals, no se me ocurrieron
+  [if (exp boolean?)])
+
+
 (define (desugar expr)
   (type-case RCFAEL expr
     [id (name) (id name)]
