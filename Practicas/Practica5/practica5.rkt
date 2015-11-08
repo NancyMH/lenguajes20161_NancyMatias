@@ -14,8 +14,8 @@
        (body-fun RCFAEL?)]
   [fun (params RCFAEL?)              
        (body RCFAEL?)]
-  [ifR (cond RCFAEL?)         
-       (res2 RCFAEL?)]
+  [ifR (exp RCFAEL?)         
+       (res RCFAEL?)]
   [equalR? (exp1 RCFAEL?)
           (exp2 RCFAEL?)]
   [op (exp procedure?)
@@ -60,9 +60,9 @@
     [with* (bindings body) (matryoshka bindings body)]
     [rec (name-fun params body-fun) (name-fun (- params  1)  (desugar body-fun))]
     [fun (params body) (fun params (desugar body))]
-    [ifR (cond then else) (ifR (desugar cond)               ;;No creo que esto este bien, no se me ocurre como hacerlo
-                         (bool #t)
-                         (bool #f))]
+    [ifR (exp res1 res2) (ifR (desugar exp)               ;;No creo que esto este bien, no se me ocurre como hacerlo
+                         (bool #t)                        ;;(desugar res1)
+                         (bool #f))]                      ;;(desugar res2)
     [equalR? (exp1 exp2) (equal?
             [(equal? exp1 exp2) (desugar (bool #t))]
             [(!equal? exp1 exp2) (desugar(bool #f))])]
