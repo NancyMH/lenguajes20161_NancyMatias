@@ -1,81 +1,98 @@
 #lang plai
 
-(define-type RCFAEL
-  [id (name symbol?)]
-  [num (n number?)]
-  [bool (exp boolean?)]
-  [Mlist (lst list?)                 
-         (car symbol?)
-         (cdr list?)]
-  [with (bindings (listof bind?))        
-         (body RCFAEL?)]
-  [rec (name-fun symbol?)           
-       (params RCFAEL?)
-       (body-fun RCFAEL?)]
-  [fun (params RCFAEL?)              
-       (body RCFAEL?)]
-  [ifR (exp RCFAEL?)         
-       (res RCFAEL?)]
-  [equalR? (exp1 RCFAEL?)
-          (exp2 RCFAEL?)]
-  [op (exp procedure?)
-      (res RCFAEL?)]
-  [binop (exp procedure?)
-         (l RCFAEL?)
-         (r RCFAEL?)])
-
-
-
 (define-type Binding
-  [bind (name symbol?) (value RCFAEL?)])
+  [bind (name symbol?) (val FAES?)])
 
-(define (operador op)
-  (case op
+(define-type FAES
+  [numS (n number?)]
+  [withS (bindings (listof bind?))
+         (body FAES?)]
+  [with*S (bindings (listof bind?))
+          (body FAES?)]
+  [idS (name symbol?)]
+  [funS (params (listof symbol?))
+        (body FAES?)]
+  [appS (fun FAES?)
+        (args (listof FAES?))]
+  [binopS (f procedure?)
+         (l FAES?)
+         (r FAES?)])
+
+(define-type FAE
+  [num (n number?)]
+  [id (name symbol?)]
+  [fun (params (listof symbol?))
+       (body FAE?)]
+  [app (fun FAE?)
+       (args (listof FAE?))]
+  [binop (f procedure?)
+         (l FAE?)
+         (r FAE?)])
+
+(define-type FAE-Value
+  [numV (n number?)]
+  [closureV (param (listof symbol?))
+            (body FAE?)
+            (env Env?)])
+
+(define-type Env
+  [mtSub]
+  [aSub (name symbol?) 
+        (value FAE-Value?) 
+        (env Env?)])
+
+; FUNCIONES AUXILIARES
+
+;; A::= <number>|<symbol>|listof(<A>)
+;; B::= (list <symbol> <A>)
+;; parse-bindings: listof(B) -> listof(bind?)
+;; "Parsea" la lista de bindings lst en sintaxis concreta
+;; mientras revisa la lista de id's en busca de repetidos.
+;; (define (parse-bindings lst) 
+(define (parse-bindings lst allow)
+  (let ([bindRep (buscaRepetido lst (lambda (e1 e2) (symbol=? (car e1) (car e2))))])
+    (if (or (boolean? bindRep) allow)
+        (map (lambda (b) (bind (car b) (parse (cadr b)))) lst)
+        (error 'parse-bindings (string-append "El id " (symbol->string (car bindRep)) " está repetido")))))
+
+(define (elige s)
+  (case s
     [(+) +]
     [(-) -]
     [(*) *]
-    [(/) /]
-    [(<) <]
-    [(>) >]
-    [(<=) <=]
-    [(>=) >=]
-    [(and) (lambda (x y) (and x y))]
-    [(or) (lambda (x y) (or x y))]))
-
-
-(define (desugar expr)
-  (type-case RCFAEL expr
-    [id (name) (id name)]
-    [num (n) (num n)]
-    [bool (exp) (bool exp)]
-    ;;[Mlist lst                                      ;;Marca un error que no entiendo
-      ;;     [(empty? lst) empty]
-        ;;   [cons (car lst)(cdr lst)]]
-    [with (bindings body) 
-           (app (fun (map (lambda(bind) 
-                            (bind-name bind)) bindings)
-                     (desugar body))
-           (map (lambda (bind) 
-                  (desugar (bind-val bind))) bindings))]
-    [with* (bindings body) (matryoshka bindings body)]
-    [rec (name-fun params body-fun) (name-fun (- params  1)  (desugar body-fun))]
-    [fun (params body) (fun params (desugar body))]
-    [ifR (exp res1 res2) (ifR (desugar exp)               ;;No creo que esto este bien, no se me ocurre como hacerlo
-                         (bool #t)                        ;;(desugar res1)
-                         (bool #f))]                      ;;(desugar res2)
-    [equalR? (exp1 exp2) (equal?
-            [(equal? exp1 exp2) (desugar (bool #t))]
-            [(!equal? exp1 exp2) (desugar(bool #f))])]
-    [op (exp res) (op exp (desugar res))]
-    [binop (exp l r) (binop exp
-                            (desugar l)
-                            (desugar r))]))
-
-
-
-(define (matryoshka bindings body)
+    [(/) /]))
+  
+;; buscaRepetido: listof(X) (X X -> boolean) -> X
+;; Dada una lista, busca repeticiones dentro de la misma
+;; usando el criterio comp. Regresa el primer elemento repetido
+;; o falso eoc.
+;; (define (buscaRepetido l comp) 
+(define (buscaRepetido l comp) 
   (cond
-    [(empty? bindings) (desugar body)]
-    [else (app (fun (list (bind-name (car bindings)))
-                    (matryoshka (cdr bindings) body))
-               (list (desugar (bind-val (car bindings)))))]))
+    [(empty? l) #f]
+    [(member? (car l) (cdr l) comp) (car l)]
+    [else (buscaRepetido (cdr l) comp)]))
+
+;; member?: X listof(Y) (X Y -> boolean) -> boolean
+;; Determina si x está en l usando "comparador" para
+;; comparar x con cada elemento de la lista.
+;; (define (member? x l comparador)
+(define (member? x l comparador)
+  (cond
+    [(empty? l) #f]
+    [(comparador (car l) x) #t]
+    [else (member? x (cdr l) comparador)]))
+
+;; A::= <number>|<symbol>|listof(<A>)
+;; parse: A -> FAES
+(define (parse sexp)
+  (cond
+    [(symbol? sexp) (idS sexp)]
+    [(number? sexp) (numS sexp)]
+    [(list? sexp)
+     (case (car sexp)
+       [(with) (withS (parse-bindings (cadr sexp) #f) (parse (caddr sexp)))]
+       [(with*) (with*S (parse-bindings (cadr sexp) #t) (parse (caddr sexp)))]
+       [(fun) (funS (cadr sexp) (parse (caddr sexp)))]
+       [(+ - / *) (binopS (elige (car sexp)) (parse (cadr sexp)) (parse (caddr sexp)))]
+       [else (appS (parse (car sexp)) (map parse (cdr sexp)))])]))
