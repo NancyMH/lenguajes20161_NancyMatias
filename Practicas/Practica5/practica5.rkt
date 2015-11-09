@@ -2,9 +2,8 @@
 
 ;(print-only-errors true)
 
-(define-type Binding
-  [bind (name symbol?) (value RCFAEL?)])
-
+;Declaración del tipo RCFAEL con sus respectivas variantes 
+;Para cada caso se agregan los parámetros que se necesitarán en cada una de ellas.
 (define-type RCFAEL
   [num (n number?)]
   [id (name symbol?)]
@@ -12,9 +11,15 @@
   [binop (f procedure?)
          (l RCFAEL?)
          (r RCFAEL?)]
-  [fun (params (listof symbol?))              
-       (body RCFAEL?)])
+  [fun (params (listof symbol?))
+       (body RCFAEL?)]
+  [equalR? (exp1 RCFAEL?)
+        (exp2 RCFAEL?)]
+  [op (f procedure?)
+   (value RCFAEL?)])
 
+;Declaración del tipo RCFAELS con sus respectivas variantes.
+;Para cada caso se agregan los parámetros que se necesitarán en cada una de ellas.
 (define-type RCFAELS
   [numS (n number?)]
   [idS (name symbol?)]
@@ -24,9 +29,14 @@
   [boolS (value boolean?)]
   [funS (params (listof symbol?))              
        (body RCFAELS?)]
-  )
+  [equalRS? (exp1 RCFAELS?)
+        (exp2 RCFAELS?)]
+  [opS (f procedure?)
+       (value RCFAELS?)])
 
 
+;Declaración de RCFAEL-Value, en donde simplemente agregamos el término
+;de boolV para el rinterp.
 (define-type RCFAEL-Value
   [numV (n number?)]
   [boolV (value boolean?)]
@@ -34,26 +44,12 @@
             (body RCFAEL?)
             (env Env?)])
 
+;Se define el ambiente que se utilizará.
 (define-type Env
   [mtSub]
   [aSub (name symbol?) 
         (value RCFAEL-Value?) 
         (env Env?)])
-
- ;[Mlist (lst list?)                 
-   ;      (car symbol?)
-    ;     (cdr list?)]
-  ;[with (bindings (listof bind?))        
-  ;       (body RCFAEL?)]
-  ;[rec (name-fun symbol?)           
-   ;    (params RCFAEL?)
-    ;   (body-fun RCFAEL?)]
-  ;[ifR (exp RCFAEL?)         
-       ;(res RCFAEL?)]
-  ;[equalR? (exp1 RCFAEL?)
-   ;       (exp2 RCFAEL?)]
-  
-
 
 ; FUNCIONES AUXILIARES
 
@@ -69,6 +65,8 @@
         (map (lambda (b) (bind (car b) (parse (cadr b)))) lst)
         (error 'parse-bindings (string-append "El id " (symbol->string (car bindRep)) " está repetido")))))
 
+;Para las operaciones binarias, se recibe una operación dada una expresión y regresa
+;el ya definido por Racket. 
 (define (elige op)
   (case op
     [(+) +]
@@ -81,6 +79,21 @@
     [(>=) >=]
     [(and) (lambda (x y) (and x y))]
     [(or) (lambda (x y) (or x y))]))
+
+;Recibido un elemento, regresa la acción que ya está definida en 
+;racket para llevar a cabo la operación correspondiente para operaciones unarias.
+(define (eligeUnario op)
+  (case op
+    ;[(inc) inc]
+    ;[(dec) dec]
+    [(zero?) zero?]
+    [(num?) number?]
+    [(neg) negative?]
+    [(bool?) boolean?]
+    [(first) first]
+    [(rest) rest]
+    [(empty?) empty?]
+    [(list?) list?]))
 
   
 ;; buscaRepetido: listof(X) (X X -> boolean) -> X
@@ -104,46 +117,74 @@
     [(comparador (car l) x) #t]
     [else (member? x (cdr l) comparador)]))
 
+;; A::= <number>|<symbol>|listof(<A>)
+;; parse: A -> RCFAEL
+(define (desugar expr)
+  (type-case RCFAELS expr
+    [idS (name) (id name)]
+    [numS (n) (num n)]
+    [boolS (value) (bool value)]
+    [binopS (exp l r) (binop exp
+                            (desugar l)
+                            (desugar r))]
+    [funS (params body) (fun params (desugar body))]
+    [equalRS? (exp1 exp2)(equalR? (desugar exp1) (desugar exp2))]
+    [opS (f value) (op f (desugar value))]
+    ))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-type Binding
+  [bind (name symbol?) (value RCFAELS?)])
 
-(define (desugar expr)
-  (type-case RCFAEL expr
-    [id (name) (id name)]
-    [num (n) (num n)]
-    [bool (value) (bool value)]
-    [binop (exp l r) (binop exp
-                            (desugar l)
-                            (desugar r))]
-    [fun (params body) (fun params (desugar body))]))
-
-(test (desugar (id 'n)) (id 'n))
-(test (desugar (num 8)) (num 8))
-(test (desugar (bool #t)) (bool #t))
-
-
+;Realizamos el parse
 (define (cparse sexp)
   (desugar (parse sexp)))
 
+;Para cada variante de RCFAEL donde ya ha pasado previamente por el parse,
+;se encarga del interprete, donde llevará a cabo la operación que le corresponda
+;y de acuerdo a los parámetros que necesita.
 (define (interp expr env)
   (type-case RCFAEL expr
     [num (n) (numV n)]
     [id (name) (lookup name env)]
     [binop (f l r) (num+ f (interp l env) (interp r env))]
-    [bool (value) (bool value)]
+    [bool (value) (boolV value)]
     [fun (params body) 
          (closureV (lambda (arg-val)
                      (interp params
-                             (aSub params arg-val env))))]))
+                             (aSub params arg-val env))))]
+    [equalR? (exp1 exp2)(auxeq (interp exp1 env) (interp exp2 env))]
+    [op (f value) (auxUnario f (interp value env))]
+    ))
+
+;;Función auxiliar de op que lleva a cabo las operaciones unarias, recibe una opeación y el elemento a evaluar.
+;Regresa un #t o #f según sea el caso para este tipo de operación.
+(define (auxUnario f v1)
+  (boolV (zero? (numV v1) )))
+
 
 ;Llama al intérprete con la expresión y el ambiente.
 (define (rinterp expr)
   (interp expr (mtSub)))
 
-;Lleva a cabo la opreción correspondiente con el par de números que recibe como parámetros;
+;Función auxiliar de binop que lleva a cabo la operación correspondiente con el par de elementos que recibe como parámetros,
+;y regresa el resultado de haberle aplicado dicha operación
+
 (define (num+ f n1 n2)
-  (numV (f (numV-n n1) (numV-n n2))))
+  (cond
+    [(and (numV? n1) (numV? n2))(numV (f (numV-n n1) (numV-n n2)))] 
+    [(and (boolV? n1) (boolV? n2) (eqv? 'and f)) (boolV (and (boolV n1) (boolV n2)))]
+    [else "La aplicación de binop no es adecuada"]))
+
+;Función auxiliar de equal? que compara dos valores, ya sea números o
+;booleanos, en otro caso se regeresa al usuario el mal uso de esta operación.
+(define (auxeq v1 v2)
+  (cond
+    [(and (numV? v1) (numV? v2) ) (boolV (equal? v1 v2))]
+    [(and (boolV? v1) (boolV? v2)) (boolV (equal? v1 v2))]
+    [else "La aplicación de equal? no es adecuada"]))
+
 
 ;Revisa si el id está dentro del ambiente. 
 (define (lookup name env)
@@ -154,56 +195,32 @@
             bound-value
             (lookup name rest-env))]))
 
-
-
-
-    ;[bool (exp) (bool exp)]
-    ;;[Mlist lst                                      ;;Marca un error que no entiendo
-      ;;     [(empty? lst) empty]
-        ;;   [cons (car lst)(cdr lst)]]
-    ;[with (bindings body) 
-     ;      (app (fun (map (lambda(bind) 
-      ;                      (bind-name bind)) bindings)
-       ;              (desugar body))
-        ;   (map (lambda (bind) 
-         ;         (desugar (bind-val bind))) bindings))]
-    ;[with (bindings body) (matryoshka bindings body)]
-    ;[rec (name-fun params body-fun) (name-fun (- params  1)  (desugar body-fun))]
-    ;[fun (params body) (fun params (desugar body))]
-    ;[ifR (exp res1 res2) (ifR (desugar exp)               ;;No creo que esto este bien, no se me ocurre como hacerlo
-     ;                    (bool #t)                        ;;(desugar res1)
-     ;                    (bool #f))]                      ;;(desugar res2)
-    ;[equalR? (exp1 exp2) (equal?
-     ;       [(equal? exp1 exp2) (desugar (bool #t))]
-      ;      [(!equal? exp1 exp2) (desugar(bool #f))])]
   
 (define (parse sexp)
   (cond
-    [(symbol? sexp) (id sexp)]
-    [(number? sexp) (num sexp)]
-    [(boolean? sexp) (bool sexp)]
+    [(eqv? 'true sexp) (boolS #t)]
+    [(eqv? 'false sexp) (boolS #f)]
+    [(symbol? sexp) (idS sexp)]
+    [(number? sexp) (numS sexp)]
     [(list? sexp)
      (case (car sexp)
-       [(+ - / * < > <= >= and or) (binop (elige (car sexp)) (parse (cadr sexp)) (parse (caddr sexp)))]
+       [(equal?) (equalRS? (parse (cadr sexp)) (parse (caddr sexp)))]
+       [(+ - / * < > <= >= and or) (binopS (elige (car sexp)) (parse (cadr sexp)) (parse (caddr sexp)))]
+       [(inc dec zero? number? neg bool? first rest empty? list?) (opS (eligeUnario (car sexp)) (parse (cadr sexp)))]
+       [(fun) (funS (cadr sexp) (parse (caddr sexp)))]
        [else #t])]))
        ;[(with) (with (parse-bindings (cadr sexp) #f) (parse (caddr sexp)))]
        ;[(with*) (with*S (parse-bindings (cadr sexp) #t) (parse (caddr sexp)))]
-       ;[(fun) (funS (cadr sexp) (parse (caddr sexp)))]
        ;[else (appS (parse (car sexp)) (map parse (cdr sexp)))])]))
 
+
+;;;;;;;;;;;;;Pruebas
 (test (rinterp (cparse '3)) (numV 3))
 (test (rinterp (cparse '{+ 3 4})) (numV 7))
 (test (rinterp (cparse '{+ {- 3 4} 7})) (numV 6))
-(test (rinterp (cparse #f)) (bool #f)) 
-;(test (rinterp (cparse '{{fun {x} x} 3})) (numV 3))
-;(test (rinterp (cparse '{> 3 4})) (bool #f))
-
-
-;(define (matryoshka bindings body)
- ; (cond
-  ;  [(empty? bindings) (desugar body)]
-  ;  [else (app (fun (list (bind-name (car bindings)))
-    ;                (matryoshka (cdr bindings) body))
-   ;            (list (desugar (bind-val (car bindings)))))]))
+(test (rinterp (cparse 'true)) (boolV #t)) 
+(test (rinterp (cparse 'false)) (boolV #f)) 
+(test (rinterp (cparse '{equal? 5 1})) (boolV #f))
+(test (rinterp (cparse '{equal? 10 10})) (boolV #t))
 
 
