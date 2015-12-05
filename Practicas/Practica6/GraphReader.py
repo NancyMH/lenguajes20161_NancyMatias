@@ -85,7 +85,3 @@ print("***GRAFICA JSON***")
 g1 = GraphReader("graph.json")
 print (g1.getDirect())
 
-g2 = GraphReader("graph.csv")
-print (g2.getDirect())
-print (g2.getVertices())
-print (g2.getAristas())
