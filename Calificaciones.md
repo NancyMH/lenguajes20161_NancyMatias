@@ -58,3 +58,21 @@ Problema 3: Sin contestar.
 Problema 4: Sin contestar.
 
 **Calificación: 3**
+
+### Tarea 3
+
+Problema I: El tipo de fib es number->number no number
+
+Problema II: Bien
+
+Problema III: Los tipos indicados y la derivación son erróneas.
+
+Problema IV: Bien.
+
+Problema V: Revuelven ventajas de tener un sistema
+de tipos con polimorfismo.
+
+Problema VI: En las ventajas y desventajas de los
+lenguajes de proposito general metieron el concepto de envolvente y embedido que no tiene que ver.
+
+**Calificación: 7.5**
