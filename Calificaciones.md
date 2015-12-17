@@ -32,6 +32,20 @@ max-hr, collapse-trackpoints.
 
 **Calificación: 0**
 
+### Practica 5
+
+No implementaron correctamente la recursion
+ni por cajas ni por procedimientos
+
+**Calificación: 5**
+
+### Practica 6
+
+No hay polimorfismo, ni implementaron la detección
+de ciclos aparte que no indican la linea de comandos para ejecutar su código.
+
+**Calificación: 8**
+
 ## Tareas
 
 ### Tarea 1
